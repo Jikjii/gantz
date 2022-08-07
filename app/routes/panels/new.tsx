@@ -3,7 +3,9 @@ export default function NewPanelRoute() {
     <div className='flex h-screen bg-gray-100'>
       <div className='m-auto'>
         <div>
-          <h1 className='text-6xl uppercase font-extrabold'>Add your own panel</h1>
+          <h1 className='text-6xl uppercase font-extrabold'>
+            Add your own panel
+          </h1>
 
           <p className='text-4xl font-light pt-16'>Form</p>
 
@@ -43,37 +45,55 @@ export default function NewPanelRoute() {
               </div>
             </div>
             <div className='px-5 pb-5'>
-              <input
-                placeholder='Name'
-                className=' text-black placeholder-gray-600 w-full px-4 py-2.5 mt-2 text-base   transition duration-500 ease-in-out transform border-transparent rounded-lg bg-gray-200  focus:border-blueGray-500 focus:bg-white dark:focus:bg-gray-800 focus:outline-none focus:shadow-outline focus:ring-2 ring-offset-current ring-offset-2 ring-gray-400'
-              />
-              <input
-                placeholder='Address'
-                className=' text-black placeholder-gray-600 w-full px-4 py-2.5 mt-2 text-base   transition duration-500 ease-in-out transform border-transparent rounded-lg bg-gray-200  focus:border-blueGray-500 focus:bg-white dark:focus:bg-gray-800 focus:outline-none focus:shadow-outline focus:ring-2 ring-offset-current ring-offset-2 ring-gray-400'
-              />
-              <div className='flex'>
-                <div className='flex-grow w-1/4 pr-2'>
-                  <input
-                    placeholder='PLZ'
-                    className=' text-black placeholder-gray-600 w-full px-4 py-2.5 mt-2 text-base   transition duration-500 ease-in-out transform border-transparent rounded-lg bg-gray-200  focus:border-blueGray-500 focus:bg-white dark:focus:bg-gray-800 focus:outline-none focus:shadow-outline focus:ring-2 ring-offset-current ring-offset-2 ring-gray-400'
-                  />
-                </div>
-                <div className='flex-grow'>
-                  <input
-                    placeholder='City'
-                    className=' text-black placeholder-gray-600 w-full px-4 py-2.5 mt-2 text-base   transition duration-500 ease-in-out transform border-transparent rounded-lg bg-gray-200  focus:border-blueGray-500 focus:bg-white dark:focus:bg-gray-800 focus:outline-none focus:shadow-outline focus:ring-2 ring-offset-current ring-offset-2 ring-gray-400'
-                  />
-                </div>
-              </div>
-              <div className='flex items-center pt-3'>
+              <form method='post'>
+                <label>Name</label>
                 <input
-                  type='checkbox'
-                  className='w-4 h-4 text-black bg-gray-300 border-none rounded-md focus:ring-transparent'
+                  placeholder='Name'
+                  type='text'
+                  name='name'
+                  className=' text-black placeholder-gray-600 w-full px-4 py-2.5 mt-2 text-base   transition duration-500 ease-in-out transform border-transparent rounded-lg bg-gray-200  focus:border-blueGray-500 focus:bg-white dark:focus:bg-gray-800 focus:outline-none focus:shadow-outline focus:ring-2 ring-offset-current ring-offset-2 ring-gray-400'
                 />
-                <label className='block ml-2 text-sm text-gray-900'>
-                  Save as default address
-                </label>
-              </div>
+                <label>Title</label>
+                <input
+                  placeholder='Title'
+                  type='text'
+                  name='title'
+                  className=' text-black placeholder-gray-600 w-full px-4 py-2.5 mt-2 text-base   transition duration-500 ease-in-out transform border-transparent rounded-lg bg-gray-200  focus:border-blueGray-500 focus:bg-white dark:focus:bg-gray-800 focus:outline-none focus:shadow-outline focus:ring-2 ring-offset-current ring-offset-2 ring-gray-400'
+                />
+                <label>Manga</label>
+                <input
+                  placeholder='Manga'
+                  type='text'
+                  name='manga'
+                  className=' text-black placeholder-gray-600 w-full px-4 py-2.5 mt-2 text-base   transition duration-500 ease-in-out transform border-transparent rounded-lg bg-gray-200  focus:border-blueGray-500 focus:bg-white dark:focus:bg-gray-800 focus:outline-none focus:shadow-outline focus:ring-2 ring-offset-current ring-offset-2 ring-gray-400'
+                />
+                <div className='flex'>
+                  <div className='flex-grow w-1/4 pr-2'>
+                    <label>Description</label>
+                    <textarea
+                      name='description'
+                      placeholder='Enter a brief description'
+                      className=' text-black placeholder-gray-600 w-full px-4 py-2.5 mt-2 text-base   transition duration-500 ease-in-out transform border-transparent rounded-lg bg-gray-200  focus:border-blueGray-500 focus:bg-white dark:focus:bg-gray-800 focus:outline-none focus:shadow-outline focus:ring-2 ring-offset-current ring-offset-2 ring-gray-400'
+                    />
+                  </div>
+                  {/* <div className='flex-grow'>
+                    <label>Manga</label>
+                    <input
+                      placeholder='City'
+                      className=' text-black placeholder-gray-600 w-full px-4 py-2.5 mt-2 text-base   transition duration-500 ease-in-out transform border-transparent rounded-lg bg-gray-200  focus:border-blueGray-500 focus:bg-white dark:focus:bg-gray-800 focus:outline-none focus:shadow-outline focus:ring-2 ring-offset-current ring-offset-2 ring-gray-400'
+                    />
+                  </div> */}
+                </div>
+                <div className='flex items-center pt-3'>
+                  <input
+                    type='checkbox'
+                    className='w-4 h-4 text-black bg-gray-300 border-none rounded-md focus:ring-transparent'
+                  />
+                  <label className='block ml-2 text-sm text-gray-900'>
+                    Save as default address
+                  </label>
+                </div>
+              </form>
             </div>
 
             <div className='px-5 '></div>
