@@ -1,4 +1,78 @@
+import type { ActionFunction } from "@remix-run/node";
+import { json, redirect } from "@remix-run/node";
+import { useActionData } from "@remix-run/react";
+
+import { db } from "~/utils/db.server";
+
+// validation
+function validatePanelTitle(title: string) {
+  if (title.length < 3) {
+    return `That title is too short. It must be at least 3 characters long.`;
+  }
+}
+
+function validatePanelImage(image: string) {
+  if (image.length < 5) {
+    return `ImageUrl is too short. It must be at least 5 characters long.`;
+  }
+}
+
+function validatePanelDescription(description: string) {
+  if (description.length < 5) {
+    return `That Description is too short. It must be at least 5 characters long.`;
+  }
+}
+
+type ActionData = {
+  formError?: string;
+  fieldErrors?: {
+    title: string | undefined;
+    image: string | undefined;
+    description: string | undefined;
+  };
+  fields?: {
+    title: string;
+    image: string;
+    description: string;
+  };
+};
+
+const badRequest = (data: ActionData) => json(data, { status: 400 });
+
+export const action: ActionFunction = async ({ request }) => {
+  const form = await request.formData();
+  const title = form.get("title");
+  const image = form.get("image");
+  const description = form.get("description");
+
+  if (
+    typeof title !== "string" ||
+    typeof image != "string" ||
+    typeof description !== "string"
+  ) {
+    return badRequest({
+      formError: "Please fill out all fields correctly.",
+    });
+  }
+
+  const fieldErrors = {
+    title: validatePanelTitle(title),
+    image: validatePanelImage(image),
+    description: validatePanelDescription(description),
+  };
+
+  const fields = { title, image, description };
+
+  if (Object.values(fieldErrors).some(Boolean)) {
+    return badRequest({ fieldErrors, fields });
+  }
+
+  const panel = await db.panel.create({ data: fields });
+  return redirect(`/panels/${panel.id}`);
+};
+
 export default function NewPanelRoute() {
+  const actionData = useActionData<ActionData>();
   return (
     <div className='flex h-screen bg-gray-100'>
       <div className='m-auto'>
@@ -46,35 +120,92 @@ export default function NewPanelRoute() {
             </div>
             <div className='px-5 pb-5'>
               <form method='post'>
-                <label>Name</label>
+                {/* <label>Name</label>
                 <input
                   placeholder='Name'
                   type='text'
                   name='name'
                   className=' text-black placeholder-gray-600 w-full px-4 py-2.5 mt-2 text-base   transition duration-500 ease-in-out transform border-transparent rounded-lg bg-gray-200  focus:border-blueGray-500 focus:bg-white dark:focus:bg-gray-800 focus:outline-none focus:shadow-outline focus:ring-2 ring-offset-current ring-offset-2 ring-gray-400'
-                />
+                /> */}
                 <label>Title</label>
                 <input
                   placeholder='Title'
                   type='text'
+                  defaultValue={actionData?.fields?.title}
                   name='title'
+                  aria-invalid={
+                    Boolean(actionData?.fieldErrors?.title) || undefined
+                  }
+                  aria-errormessage={
+                    actionData?.fieldErrors?.title ? "name-error" : undefined
+                  }
                   className=' text-black placeholder-gray-600 w-full px-4 py-2.5 mt-2 text-base   transition duration-500 ease-in-out transform border-transparent rounded-lg bg-gray-200  focus:border-blueGray-500 focus:bg-white dark:focus:bg-gray-800 focus:outline-none focus:shadow-outline focus:ring-2 ring-offset-current ring-offset-2 ring-gray-400'
                 />
-                <label>Manga</label>
+                <div>
+                  {actionData?.fieldErrors?.title ? (
+                    <p
+                      className='form-validation-error'
+                      role='alert'
+                      id='name-error'
+                    >
+                      {actionData.fieldErrors.title}
+                    </p>
+                  ) : null}
+                </div>
+                <label>Image</label>
                 <input
-                  placeholder='Manga'
+                  placeholder='Image'
+                  defaultValue={actionData?.fields?.image}
                   type='text'
-                  name='manga'
+                  name='image'
+                  aria-invalid={
+                    Boolean(actionData?.fieldErrors?.image) || undefined
+                  }
+                  aria-errormessage={
+                    actionData?.fieldErrors?.image ? "name-error" : undefined
+                  }
                   className=' text-black placeholder-gray-600 w-full px-4 py-2.5 mt-2 text-base   transition duration-500 ease-in-out transform border-transparent rounded-lg bg-gray-200  focus:border-blueGray-500 focus:bg-white dark:focus:bg-gray-800 focus:outline-none focus:shadow-outline focus:ring-2 ring-offset-current ring-offset-2 ring-gray-400'
                 />
+                <div>
+                  {actionData?.fieldErrors?.image ? (
+                    <p
+                      className='form-validation-error'
+                      role='alert'
+                      id='name-error'
+                    >
+                      {actionData.fieldErrors.image}
+                    </p>
+                  ) : null}
+                </div>
                 <div className='flex'>
                   <div className='flex-grow w-1/4 pr-2'>
                     <label>Description</label>
                     <textarea
+                      defaultValue={actionData?.fields?.description}
                       name='description'
+                      aria-invalid={
+                        Boolean(actionData?.fieldErrors?.description) ||
+                        undefined
+                      }
+                      aria-errormessage={
+                        actionData?.fieldErrors?.description
+                          ? "content-error"
+                          : undefined
+                      }
                       placeholder='Enter a brief description'
                       className=' text-black placeholder-gray-600 w-full px-4 py-2.5 mt-2 text-base   transition duration-500 ease-in-out transform border-transparent rounded-lg bg-gray-200  focus:border-blueGray-500 focus:bg-white dark:focus:bg-gray-800 focus:outline-none focus:shadow-outline focus:ring-2 ring-offset-current ring-offset-2 ring-gray-400'
                     />
+                    <div>
+                      {actionData?.fieldErrors?.description ? (
+                        <p
+                          className='form-validation-error'
+                          role='alert'
+                          id='content-error'
+                        >
+                          {actionData.fieldErrors.description}
+                        </p>
+                      ) : null}
+                    </div>
                   </div>
                   {/* <div className='flex-grow'>
                     <label>Manga</label>
@@ -84,7 +215,7 @@ export default function NewPanelRoute() {
                     />
                   </div> */}
                 </div>
-                <div className='flex items-center pt-3'>
+                {/* <div className='flex items-center pt-3'>
                   <input
                     type='checkbox'
                     className='w-4 h-4 text-black bg-gray-300 border-none rounded-md focus:ring-transparent'
@@ -92,7 +223,36 @@ export default function NewPanelRoute() {
                   <label className='block ml-2 text-sm text-gray-900'>
                     Save as default address
                   </label>
+                </div> */}
+                {/*  */}
+                <div className='flex-initial pl-3'>
+                  {actionData?.formError ? (
+                    <p className='form-validation-error' role='alert'>
+                      {actionData.formError}
+                    </p>
+                  ) : null}
+                  <button
+                    type='submit'
+                    className='flex items-center px-5 py-2.5 font-medium tracking-wide text-white capitalize   bg-black rounded-md hover:bg-gray-800  focus:outline-none focus:bg-gray-900  transition duration-300 transform active:scale-95 ease-in-out'
+                  >
+                    <svg
+                      xmlns='http://www.w3.org/2000/svg'
+                      height='24px'
+                      viewBox='0 0 24 24'
+                      width='24px'
+                      fill='#FFFFFF'
+                    >
+                      <path d='M0 0h24v24H0V0z' fill='none'></path>
+                      <path
+                        d='M5 5v14h14V7.83L16.17 5H5zm7 13c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-8H6V6h9v4z'
+                        opacity='.3'
+                      ></path>
+                      <path d='M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm2 16H5V5h11.17L19 7.83V19zm-7-7c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3zM6 6h9v4H6z'></path>
+                    </svg>
+                    <span className='pl-2 mx-1'>Save</span>
+                  </button>
                 </div>
+                {/*  */}
               </form>
             </div>
 
